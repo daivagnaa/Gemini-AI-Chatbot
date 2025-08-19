@@ -76,15 +76,14 @@ st.markdown("""
             color: var(--primary-color);
         }
         
-        /* Default icon style (for light mode) */
         .sidebar-social img {
             width: 24px;
             height: 24px;
         }
 
-        /* --- NEW: Forceful override for dark theme icons --- */
+        /* --- NEW: The !important flag to force the style --- */
         body[data-theme="dark"] .sidebar-social img {
-            filter: brightness(0) invert(1);
+            filter: brightness(0) invert(1) !important;
         }
     </style>
 """, unsafe_allow_html=True)
