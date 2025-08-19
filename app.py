@@ -1,200 +1,180 @@
 import streamlit as st
-import streamlit.components.v1 as components
-import gemini_api  # Assumes gemini_api.py is updated for streaming
+import gemini_api
 
 # ---- Page Configuration ----
 st.set_page_config(
     page_title="Gemini AI Chatbot - By Daivagna Parmar",
     page_icon="💬",
     layout="centered",
-    initial_sidebar_state="auto" # Let Streamlit manage the sidebar state
+    initial_sidebar_state="expanded"
 )
 
-# ---- Custom CSS for a modern, responsive, and theme-aware UI ----
+# ---- Custom CSS (Following Diabetes App Pattern) ----
 st.markdown("""
     <style>
-        /* Define theme variables for light and dark mode */
-        :root {
-            --bg-color-light: #f0f2f6;
-            --bg-color-dark: #1a1a1a;
-            --sidebar-bg-light: #ffffff;
-            --sidebar-bg-dark: #262730;
-            --text-color-light: #2d3a4b;
-            --text-color-dark: #fafafa;
-            --primary-color: #007bff;
+        .main-header {
+            text-align: center;
+            color: #2E86AB;
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
-
-        /* Apply variables based on Streamlit's theme */
-        body[data-theme="light"] {
-            --bg-color: var(--bg-color-light);
-            --sidebar-bg: var(--sidebar-bg-light);
-            --text-color: var(--text-color-light);
+        .sub-header {
+            text-align: center;
+            color: #666;
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            font-style: italic;
         }
-        body[data-theme="dark"] {
-            --bg-color: var(--bg-color-dark);
-            --sidebar-bg: var(--sidebar-bg-dark);
-            --text-color: var(--text-color-dark);
+        .developer-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            margin: 2rem 0;
         }
-
-        /* General Body and App Styling */
-        .stApp {
-            background-color: var(--bg-color);
+        .stButton > button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0.8rem 3rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-
-        /* Main Title and Subtitle */
-        .main-title {
-            font-size: 2.8rem; font-weight: 700; color: var(--text-color);
-            text-align: center; margin-bottom: 0.2em;
+        .stButton > button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
-        .subtitle {
-            font-size: 1.2rem; color: var(--text-color);
-            text-align: center; margin-bottom: 2em; opacity: 0.8;
+        .info-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            margin: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        /* Sidebar Styling */
-        [data-testid="stSidebar"] {
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid rgba(128, 128, 128, 0.2);
+        .contact-info {
+            background: transparent;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            text-align: center;
         }
-        .sidebar-title {
-            font-size: 1.5rem; font-weight: 600; color: var(--text-color);
-            margin-bottom: 0.5em; text-align: center;
+        .contact-info h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
         }
-        .sidebar-subtitle {
-            font-size: 1rem; color: var(--text-color); opacity: 0.7;
-            text-align: center; margin-bottom: 1.5em;
+        .contact-info hr {
+            border-color: rgba(128, 128, 128, 0.3);
+            margin: 1rem 0;
         }
-        .sidebar-social {
-            display: flex; flex-direction: column; align-items: center;
-            margin-top: 2em; gap: 1em;
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            align-items: center;
         }
-        .sidebar-social a {
-            text-decoration: none; color: var(--text-color);
-            font-size: 1.1rem; display: flex; align-items: center; gap: 0.7em;
-            transition: color 0.2s ease-in-out;
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            width: 100%;
+            max-width: 200px;
         }
-        .sidebar-social a:hover {
-            color: var(--primary-color);
+        .social-link:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            color: var(--text-color);
+        }
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
         }
         
-        .sidebar-social img {
-            width: 24px;
-            height: 24px;
-        }
-
-        body[data-theme="dark"] .sidebar-social img {
-            filter: brightness(0) invert(1) !important;
-        }
-
-        /* --- Media Query for Mobile Responsiveness --- */
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 2rem !important; /* Smaller title on mobile */
+        /* Dark theme compatibility */
+        @media (prefers-color-scheme: dark) {
+            .info-card {
+                background: rgba(102, 126, 234, 0.1);
+                border-left: 4px solid #667eea;
+                color: var(--text-color);
             }
-            .subtitle {
-                font-size: 1rem !important; /* Smaller subtitle */
-            }
-        }
-
-        /* When sidebar is open on small screens, hide main view */
-        @media (max-width: 768px) {
-            body.sidebar-open-mobile [data-testid="stAppViewContainer"] {
-                opacity: 0 !important;
-                pointer-events: none !important;
-            }
-            body.sidebar-open-mobile [data-testid="stHeader"],
-            body.sidebar-open-mobile [data-testid="stToolbar"],
-            body.sidebar-open-mobile footer {
-                opacity: 0 !important;
-                pointer-events: none !important;
-            }
-            /* Ensure sidebar overlays the page on mobile */
-            [data-testid="stSidebar"] {
-                position: fixed !important;
-                left: 0; top: 0; bottom: 0;
-                width: 85vw !important; max-width: 85vw;
-                z-index: 1000 !important;
-                box-shadow: 0 0 24px rgba(0,0,0,0.5);
+            .social-icon {
+                filter: brightness(0) invert(1);
             }
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Add a tiny script that toggles a class on body when the sidebar is visible
-components.html("""
-<script>
-(function () {
-  function apply() {
-    const sb = document.querySelector('[data-testid="stSidebar"]');
-    if (!sb) return;
-    const visible = sb.getBoundingClientRect().width > 0 &&
-                    getComputedStyle(sb).visibility !== 'hidden';
-    if (visible && window.innerWidth <= 768) {
-      document.body.classList.add('sidebar-open-mobile');
-    } else {
-      document.body.classList.remove('sidebar-open-mobile');
-    }
-  }
-  const sb = document.querySelector('[data-testid="stSidebar"]');
-  if (sb) {
-    new ResizeObserver(apply).observe(sb);
-    new MutationObserver(apply).observe(sb, { attributes: true, attributeFilter: ['class','style'] });
-  }
-  window.addEventListener('resize', apply);
-  setInterval(apply, 500); // fallback
-  apply();
-})();
-</script>
-""", height=0)
-
 # ---- Sidebar Content ----
 with st.sidebar:
-    st.markdown('<div class="sidebar-title">Developed by<br>Daivagna Parmar</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-subtitle">AI Chatbot powered by Gemini</div>', unsafe_allow_html=True)
-    
-    # Re-added the "New Chat" button for better usability
-    if st.button("✨ Start New Chat", use_container_width=True):
-        st.session_state.chat = gemini_api.start_new_chat()
-        st.rerun()
 
-    st.markdown(
-        """
-        <div class="sidebar-social">
-            <a href="https://github.com/daivagnaa" target="_blank"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg" alt="GitHub"/> GitHub</a>
-            <a href="https://in.linkedin.com/in/daivagna-parmar-949315316" target="_blank"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linkedin/linkedin-plain.svg" alt="LinkedIn"/> LinkedIn</a>
-            <a href="mailto:devparmar1895@gmail.com" target="_blank"><img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/gmail.svg" alt="Gmail"/> Gmail</a>
-            <a href="https://www.instagram.com/daivagnaa/" target="_blank"><img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/instagram.svg" alt="Instagram"/> Instagram</a>
+    # Contact Information at Bottom of Sidebar
+    st.markdown("""
+    <div class="contact-info">
+        <h4>Developed by Daivagna Parmar</h4>
+        <hr>
+        <div class="social-links">
+            <a href="https://github.com/daivagnaa" target="_blank" class="social-link">
+                <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg" 
+                     alt="GitHub" class="social-icon">
+                GitHub
+            </a>
+            <a href="https://in.linkedin.com/in/daivagna-parmar-949315316" target="_blank" class="social-link">
+                <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linkedin/linkedin-plain.svg"
+                     alt="LinkedIn" class="social-icon">
+                LinkedIn
+            </a>
+            <a href="https://www.instagram.com/daivagnaa/" target="_blank" class="social-link">
+                <img src="https://www.svgrepo.com/show/424911/instagram-logo-facebook-2.svg" 
+                     alt="Instagram" class="social-icon">
+                Instagram
+            </a>
+            <a href="mailto:devparmar1895@gmail.com" class="social-link">
+                <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/gmail.svg" 
+                     alt="Gmail" class="social-icon">
+                Gmail
+            </a>
         </div>
-        """,
-        unsafe_allow_html=True
-    )
-
+    </div>
+    """, unsafe_allow_html=True)
 
 # ---- Main Application ----
-st.markdown('<div class="main-title">💬 Gemini AI Chatbot</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Ask me anything! I can help with code, answer questions, and more.</div>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">💬 Gemini AI Chatbot</h1>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Advanced AI-Powered Conversation Assistant</p>', unsafe_allow_html=True)
 
-# Initialize chat session in state
+# Initialize chat
 if "chat" not in st.session_state:
     st.session_state.chat = gemini_api.start_new_chat()
 
-# Display the info message only if the chat is new
 if not st.session_state.chat.history:
     st.info("This app uses the Gemini API. Your conversations are not stored permanently.")
 
-# Display chat history
+# Chat history
 for message in st.session_state.chat.history:
     role = "user" if message.role == "user" else "assistant"
     with st.chat_message(role):
         st.markdown(message.parts[0].text)
 
-# Handle user input
+# User input
 if prompt := st.chat_input("Type your message here..."):
-    # Display user message
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Get and display assistant's response (with streaming)
     with st.chat_message("assistant"):
         try:
             with st.spinner("🧠 Thinking..."):
