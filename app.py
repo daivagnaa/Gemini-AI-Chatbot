@@ -34,7 +34,7 @@ st.markdown("""
             --bg-color: var(--bg-color-dark);
             --sidebar-bg: var(--sidebar-bg-dark);
             --text-color: var(--text-color-dark);
-            --icon-filter: invert(1);
+            --icon-filter: brightness(0) invert(1);
         }
 
         /* General Body and App Styling */
