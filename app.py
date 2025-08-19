@@ -93,11 +93,7 @@ st.markdown("""
 with st.sidebar:
     st.markdown('<div class="sidebar-title">Developed by<br>Daivagna Parmar</div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-subtitle">AI Chatbot powered by Gemini</div>', unsafe_allow_html=True)
-
-    if st.button("✨ Start New Chat", use_container_width=True):
-        st.session_state.chat = gemini_api.start_new_chat()
-        st.rerun()
-
+    
     st.markdown(
         """
         <div class="sidebar-social">
