@@ -180,7 +180,7 @@ with st.sidebar:
 
 # ---- Main Application ----
 st.markdown('<h1 class="main-header">💬 Gemini AI Chatbot</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Advanced AI-Powered Conversation Assistant (Gemini Flash 1.5)</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Advanced AI-Powered Conversation Assistant (Gemini Flash 2.5)</p>', unsafe_allow_html=True)
 
 # Initialize chat
 if "chat" not in st.session_state:
