@@ -86,8 +86,8 @@ st.markdown("""
             gap: 0.8rem;
             padding: 0.6rem 1rem;
             border-radius: 8px;
-            text-decoration: none;
-            color: var(--text-color);
+            text-decoration: none !important;  /* Remove underline */
+            color: var(--text-color) !important;  /* Force normal text color */
             transition: all 0.3s ease;
             background: rgba(102, 126, 234, 0.1);
             border: 1px solid rgba(102, 126, 234, 0.2);
@@ -98,7 +98,8 @@ st.markdown("""
             background: rgba(102, 126, 234, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            color: var(--text-color);
+            color: var(--text-color) !important;  /* Keep normal color on hover */
+            text-decoration: none !important;  /* No underline on hover */
         }
         .social-icon {
             width: 20px;
@@ -155,7 +156,7 @@ with st.sidebar:
 
 # ---- Main Application ----
 st.markdown('<h1 class="main-header">💬 Gemini AI Chatbot</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Advanced AI-Powered Conversation Assistant</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Advanced AI-Powered Conversation Assistant (Gemini Flash 2.5)</p>', unsafe_allow_html=True)
 
 # Initialize chat
 if "chat" not in st.session_state:
