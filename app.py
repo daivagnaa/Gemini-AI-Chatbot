@@ -1,4 +1,13 @@
 import streamlit as st
+import os
+
+# Handle Streamlit secrets for deployment BEFORE importing gemini_api
+try:
+    if "GEMINI_API_KEY" in st.secrets:
+        os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
+except:
+    pass  # Will fall back to .env file for local development
+
 import gemini_api
 
 # ---- Page Configuration ----
@@ -86,8 +95,8 @@ st.markdown("""
             gap: 0.8rem;
             padding: 0.6rem 1rem;
             border-radius: 8px;
-            text-decoration: none !important;  /* Remove underline */
-            color: var(--text-color) !important;  /* Force normal text color */
+            text-decoration: none !important;
+            color: var(--text-color) !important;
             transition: all 0.3s ease;
             background: rgba(102, 126, 234, 0.1);
             border: 1px solid rgba(102, 126, 234, 0.2);
@@ -98,8 +107,8 @@ st.markdown("""
             background: rgba(102, 126, 234, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            color: var(--text-color) !important;  /* Keep normal color on hover */
-            text-decoration: none !important;  /* No underline on hover */
+            color: var(--text-color) !important;
+            text-decoration: none !important;
         }
         .social-icon {
             width: 20px;
