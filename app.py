@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import gemini_api  # Assumes gemini_api.py is updated for streaming
 
 # ---- Page Configuration ----
@@ -94,9 +95,57 @@ st.markdown("""
                 font-size: 1rem !important; /* Smaller subtitle */
             }
         }
+
+        /* When sidebar is open on small screens, hide main view */
+        @media (max-width: 768px) {
+            body.sidebar-open-mobile [data-testid="stAppViewContainer"] {
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+            body.sidebar-open-mobile [data-testid="stHeader"],
+            body.sidebar-open-mobile [data-testid="stToolbar"],
+            body.sidebar-open-mobile footer {
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+            /* Ensure sidebar overlays the page on mobile */
+            [data-testid="stSidebar"] {
+                position: fixed !important;
+                left: 0; top: 0; bottom: 0;
+                width: 85vw !important; max-width: 85vw;
+                z-index: 1000 !important;
+                box-shadow: 0 0 24px rgba(0,0,0,0.5);
+            }
+        }
     </style>
 """, unsafe_allow_html=True)
 
+# Add a tiny script that toggles a class on body when the sidebar is visible
+components.html("""
+<script>
+(function () {
+  function apply() {
+    const sb = document.querySelector('[data-testid="stSidebar"]');
+    if (!sb) return;
+    const visible = sb.getBoundingClientRect().width > 0 &&
+                    getComputedStyle(sb).visibility !== 'hidden';
+    if (visible && window.innerWidth <= 768) {
+      document.body.classList.add('sidebar-open-mobile');
+    } else {
+      document.body.classList.remove('sidebar-open-mobile');
+    }
+  }
+  const sb = document.querySelector('[data-testid="stSidebar"]');
+  if (sb) {
+    new ResizeObserver(apply).observe(sb);
+    new MutationObserver(apply).observe(sb, { attributes: true, attributeFilter: ['class','style'] });
+  }
+  window.addEventListener('resize', apply);
+  setInterval(apply, 500); // fallback
+  apply();
+})();
+</script>
+""", height=0)
 
 # ---- Sidebar Content ----
 with st.sidebar:
