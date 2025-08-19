@@ -1,12 +1,27 @@
 import streamlit as st
 import os
 
+# Debug: Check if we're on Streamlit Cloud
+print("🔍 Checking for Streamlit secrets...")
+
 # Handle Streamlit secrets for deployment BEFORE importing gemini_api
 try:
-    if "GEMINI_API_KEY" in st.secrets:
-        os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
-except:
-    pass  # Will fall back to .env file for local development
+    print(f"🔍 Available secrets: {list(st.secrets.keys()) if hasattr(st, 'secrets') else 'No secrets object'}")
+    
+    if hasattr(st, 'secrets') and "GEMINI_API_KEY" in st.secrets:
+        api_key = st.secrets["GEMINI_API_KEY"]
+        os.environ["GEMINI_API_KEY"] = api_key
+        print(f"✅ Set API key from Streamlit secrets: {api_key[:10]}...")
+    else:
+        print("❌ GEMINI_API_KEY not found in Streamlit secrets")
+        print("📁 Will try to load from .env file...")
+        
+except Exception as e:
+    print(f"❌ Error accessing Streamlit secrets: {e}")
+
+# Debug: Check environment variable
+current_api_key = os.getenv("GEMINI_API_KEY")
+print(f"🔍 Environment GEMINI_API_KEY: {'Found' if current_api_key else 'Not found'}")
 
 # NOW import gemini_api after setting the environment variable
 import gemini_api
@@ -133,7 +148,6 @@ st.markdown("""
 
 # ---- Sidebar Content ----
 with st.sidebar:
-
     # Contact Information at Bottom of Sidebar
     st.markdown("""
     <div class="contact-info">
