@@ -81,9 +81,18 @@ st.markdown("""
             height: 24px;
         }
 
-        /* --- NEW: The !important flag to force the style --- */
         body[data-theme="dark"] .sidebar-social img {
             filter: brightness(0) invert(1) !important;
+        }
+
+        /* --- NEW: Media Query for Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem !important; /* Smaller title on mobile */
+            }
+            .subtitle {
+                font-size: 1rem !important; /* Smaller subtitle */
+            }
         }
     </style>
 """, unsafe_allow_html=True)
