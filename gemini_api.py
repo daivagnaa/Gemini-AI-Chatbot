@@ -9,10 +9,10 @@ load_dotenv()
 # Configure the API key
 try:
     # Change this line to match your .env variable name
-    api_key = os.getenv("GOOGLE_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
-    if not api_key:
+    my_api_key = os.getenv("GOOGLE_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
+    if not my_api_key:
         raise ValueError("GOOGLE_API_KEY not found in environment or secrets.")
-    genai.configure(api_key=api_key)
+    genai.configure(api_key=my_api_key)
 except Exception as e:
     print(f"Error configuring Gemini API: {e}")
 
