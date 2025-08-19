@@ -3,7 +3,7 @@ import gemini_api  # Assumes gemini_api.py is updated for streaming
 
 # ---- Page Configuration ----
 st.set_page_config(
-    page_title="Gemini AI Chatbot",
+    page_title="Gemini AI Chatbot - By Daivagna Parmar",
     page_icon="💬",
     layout="centered",
     initial_sidebar_state="expanded"
@@ -28,13 +28,11 @@ st.markdown("""
             --bg-color: var(--bg-color-light);
             --sidebar-bg: var(--sidebar-bg-light);
             --text-color: var(--text-color-light);
-            --icon-filter: invert(0);
         }
         body[data-theme="dark"] {
             --bg-color: var(--bg-color-dark);
             --sidebar-bg: var(--sidebar-bg-dark);
             --text-color: var(--text-color-dark);
-            --icon-filter: brightness(0) invert(1);
         }
 
         /* General Body and App Styling */
@@ -50,20 +48,6 @@ st.markdown("""
         .subtitle {
             font-size: 1.2rem; color: var(--text-color);
             text-align: center; margin-bottom: 2em; opacity: 0.8;
-        }
-
-        /* Chat Message Styling */
-        .stChatMessage {
-            border-radius: 16px !important; padding: 1.1em 1.5em !important;
-            margin-bottom: 1em !important; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-            border: 1px solid transparent;
-        }
-        [data-testid="chat-message-container-user"] {
-            background-color: var(--primary-color, #007bff);
-            color: white;
-        }
-        [data-testid="chat-message-container-assistant"] {
-            background-color: var(--secondary-background-color, #ffffff);
         }
 
         /* Sidebar Styling */
@@ -91,9 +75,16 @@ st.markdown("""
         .sidebar-social a:hover {
             color: var(--primary-color);
         }
+        
+        /* Default icon style (for light mode) */
         .sidebar-social img {
-            width: 24px; height: 24px;
-            filter: var(--icon-filter);
+            width: 24px;
+            height: 24px;
+        }
+
+        /* --- NEW: Forceful override for dark theme icons --- */
+        body[data-theme="dark"] .sidebar-social img {
+            filter: brightness(0) invert(1);
         }
     </style>
 """, unsafe_allow_html=True)
