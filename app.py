@@ -94,6 +94,10 @@ with st.sidebar:
     st.markdown('<div class="sidebar-title">Developed by<br>Daivagna Parmar</div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-subtitle">AI Chatbot powered by Gemini</div>', unsafe_allow_html=True)
 
+    if st.button("✨ Start New Chat", use_container_width=True):
+        st.session_state.chat = gemini_api.start_new_chat()
+        st.rerun()
+
     st.markdown(
         """
         <div class="sidebar-social">
@@ -111,13 +115,13 @@ with st.sidebar:
 st.markdown('<div class="main-title">💬 Gemini AI Chatbot</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Ask me anything! I can help with code, answer questions, and more.</div>', unsafe_allow_html=True)
 
-st.divider()
-
-st.info("This app uses the Gemini API. Your conversations are not stored permanently.")
-
 # Initialize chat session in state
 if "chat" not in st.session_state:
     st.session_state.chat = gemini_api.start_new_chat()
+
+# Display the info message only if the chat is new
+if not st.session_state.chat.history:
+    st.info("This app uses the Gemini API. Your conversations are not stored permanently.")
 
 # Display chat history
 for message in st.session_state.chat.history:
@@ -136,8 +140,8 @@ if prompt := st.chat_input("Type your message here..."):
         try:
             with st.spinner("🧠 Thinking..."):
                 # **CORRECTED**: Use the streaming function and st.write_stream
-                response_stream = gemini_api.send_message(st.session_state.chat, prompt)
-                full_response = st.write(response_stream)
+                response_stream = gemini_api.send_message_stream(st.session_state.chat, prompt)
+                full_response = st.write_stream(response_stream)
         except Exception as e:
             st.error(f"An error occurred: {e}")
             st.warning("Please check your API key or try again later.")
