@@ -23,7 +23,7 @@ print("✅ Gemini API configured successfully")
 
 def start_new_chat():
     """Starts a new chat session with a capable Gemini model."""
-    model = genai.GenerativeModel('gemini-1.5-flash') 
+    model = genai.GenerativeModel('gemini-2.5-flash') 
     return model.start_chat(history=[])
 
 def send_message(chat, message):
