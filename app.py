@@ -6,7 +6,7 @@ st.set_page_config(
     page_title="Gemini AI Chatbot - By Daivagna Parmar",
     page_icon="💬",
     layout="centered",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto" # Let Streamlit manage the sidebar state
 )
 
 # ---- Custom CSS for a modern, responsive, and theme-aware UI ----
@@ -85,7 +85,7 @@ st.markdown("""
             filter: brightness(0) invert(1) !important;
         }
 
-        /* --- NEW: Media Query for Mobile Responsiveness --- */
+        /* --- Media Query for Mobile Responsiveness --- */
         @media (max-width: 768px) {
             .main-title {
                 font-size: 2rem !important; /* Smaller title on mobile */
@@ -103,6 +103,11 @@ with st.sidebar:
     st.markdown('<div class="sidebar-title">Developed by<br>Daivagna Parmar</div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-subtitle">AI Chatbot powered by Gemini</div>', unsafe_allow_html=True)
     
+    # Re-added the "New Chat" button for better usability
+    if st.button("✨ Start New Chat", use_container_width=True):
+        st.session_state.chat = gemini_api.start_new_chat()
+        st.rerun()
+
     st.markdown(
         """
         <div class="sidebar-social">
@@ -144,7 +149,6 @@ if prompt := st.chat_input("Type your message here..."):
     with st.chat_message("assistant"):
         try:
             with st.spinner("🧠 Thinking..."):
-                # **CORRECTED**: Use the streaming function and st.write_stream
                 response_stream = gemini_api.send_message_stream(st.session_state.chat, prompt)
                 full_response = st.write_stream(response_stream)
         except Exception as e:
