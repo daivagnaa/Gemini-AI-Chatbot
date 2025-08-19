@@ -1,22 +1,23 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
+import streamlit as st
 
 # Load variables from .env file
 load_dotenv()
 
 # Configure the API key
 try:
-    api_key = os.getenv("GEMINI_API_KEY")
+    # Change this line to match your .env variable name
+    api_key = os.getenv("GOOGLE_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY not found.")
+        raise ValueError("GOOGLE_API_KEY not found in environment or secrets.")
     genai.configure(api_key=api_key)
 except Exception as e:
     print(f"Error configuring Gemini API: {e}")
 
 def start_new_chat():
     """Starts a new chat session with a capable Gemini model."""
-    # Using a more recent and capable model
     model = genai.GenerativeModel('gemini-1.5-flash') 
     return model.start_chat(history=[])
 
@@ -28,10 +29,8 @@ def send_message(chat, message):
 def send_message_stream(chat, message):
     """Sends a message and streams the response back in chunks."""
     try:
-        # Use stream=True to get a streaming response
         response = chat.send_message(message, stream=True)
         for chunk in response:
-            # Yield each piece of the response as it arrives
             yield chunk.text
     except Exception as e:
         yield f"An error occurred: {e}"
