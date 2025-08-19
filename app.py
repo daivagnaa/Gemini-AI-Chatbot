@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import gemini_api
 
 # Handle Streamlit secrets for deployment BEFORE importing gemini_api
 try:
@@ -7,8 +8,6 @@ try:
         os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
 except:
     pass  # Will fall back to .env file for local development
-
-import gemini_api
 
 # ---- Page Configuration ----
 st.set_page_config(
